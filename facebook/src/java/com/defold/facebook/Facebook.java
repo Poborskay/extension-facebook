@@ -120,8 +120,15 @@ public class Facebook implements Handler.Callback {
     }
 
     public String getAccessToken() {
-        if (AccessToken.getCurrentAccessToken() != null) {
-            return AccessToken.getCurrentAccessToken().getToken();
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        if (accessToken != null) {
+
+            // https://developers.facebook.com/docs/facebook-login/testing-your-login-flow/test-user-data-access/
+            if (accessToken.isDataAccessExpired()) {
+                Log.i(TAG, "Data access has expired, returning null as access_token");
+                return null; // force a reauth of the data
+            }
+            return accessToken.getToken();
         }
         return null;
     }

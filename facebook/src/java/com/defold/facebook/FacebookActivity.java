@@ -176,39 +176,44 @@ public class FacebookActivity extends Activity {
 
     private void actionLogin() {
 
-        if (AccessToken.getCurrentAccessToken() != null) {
-            UpdateUserData(true);
-        } else {
-            LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-
-                @Override
-                public void onSuccess(LoginResult result) {
-                    UpdateUserData(true);
-                }
-
-                @Override
-                public void onCancel() {
-                    Bundle data = new Bundle();
-                    data.putBoolean(Facebook.MSG_KEY_SUCCESS, false);
-                    data.putInt(Facebook.MSG_KEY_STATE, State.STATE_CLOSED_LOGIN_FAILED.getValue());
-                    data.putString(Facebook.MSG_KEY_ERROR, "Login canceled");
-                    respond(Facebook.ACTION_LOGIN, data);
-                }
-
-                @Override
-                public void onError(FacebookException error) {
-                    Bundle data = new Bundle();
-                    data.putBoolean(Facebook.MSG_KEY_SUCCESS, false);
-                    data.putInt(Facebook.MSG_KEY_STATE, State.STATE_CLOSED_LOGIN_FAILED.getValue());
-                    data.putString(Facebook.MSG_KEY_ERROR, error.toString());
-                    respond(Facebook.ACTION_LOGIN, data);
-                }
-
-            });
-
-            LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email", "user_friends"));
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        if (accessToken != null) {
+            if (!accessToken.isDataAccessExpired()) {
+                UpdateUserData(true);
+                return;
+            }
         }
 
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult result) {
+                UpdateUserData(true);
+            }
+            @Override
+            public void onCancel() {
+                Bundle data = new Bundle();
+                data.putBoolean(Facebook.MSG_KEY_SUCCESS, false);
+                data.putInt(Facebook.MSG_KEY_STATE, State.STATE_CLOSED_LOGIN_FAILED.getValue());
+                data.putString(Facebook.MSG_KEY_ERROR, "Login canceled");
+                respond(Facebook.ACTION_LOGIN, data);
+            }
+            @Override
+            public void onError(FacebookException error) {
+                Bundle data = new Bundle();
+                data.putBoolean(Facebook.MSG_KEY_SUCCESS, false);
+                data.putInt(Facebook.MSG_KEY_STATE, State.STATE_CLOSED_LOGIN_FAILED.getValue());
+                data.putString(Facebook.MSG_KEY_ERROR, error.toString());
+                respond(Facebook.ACTION_LOGIN, data);
+            }
+        });
+
+        if (accessToken != null && accessToken.isDataAccessExpired()) {
+            Log.i(TAG, "Data access has expired, reauthorizing data access");
+            LoginManager.getInstance().reauthorizeDataAccess(this);
+        } else {
+            Log.i(TAG, "Access token was null or had expired");
+            LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email", "user_friends"));
+        }
     }
 
     private void actionLoginWithPermissions(final String action, final Bundle extras) {
@@ -243,12 +248,20 @@ public class FacebookActivity extends Activity {
 
         });
 
-        if (action.equals(Facebook.ACTION_LOGIN_WITH_PUBLISH_PERMISSIONS)) {
-            int audience = extras.getInt(Facebook.INTENT_EXTRA_AUDIENCE);
-            LoginManager.getInstance().setDefaultAudience(convertDefaultAudience(audience));
-            LoginManager.getInstance().logInWithPublishPermissions(this, Arrays.asList(permissions));
-        } else if (action.equals(Facebook.ACTION_LOGIN_WITH_READ_PERMISSIONS)) {
-            LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList(permissions));
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        if (accessToken != null && accessToken.isDataAccessExpired()) {
+            Log.i(TAG, "Data access has expired, reauthorizing data access");
+            LoginManager.getInstance().reauthorizeDataAccess(this);
+
+        } else {
+            Log.i(TAG, "Access token was null or had expired");
+            if (action.equals(Facebook.ACTION_LOGIN_WITH_PUBLISH_PERMISSIONS)) {
+                int audience = extras.getInt(Facebook.INTENT_EXTRA_AUDIENCE);
+                LoginManager.getInstance().setDefaultAudience(convertDefaultAudience(audience));
+                LoginManager.getInstance().logInWithPublishPermissions(this, Arrays.asList(permissions));
+            } else if (action.equals(Facebook.ACTION_LOGIN_WITH_READ_PERMISSIONS)) {
+                LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList(permissions));
+            }
         }
     }
 
