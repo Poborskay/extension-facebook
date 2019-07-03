@@ -7,7 +7,7 @@ struct lua_State;
 
 namespace dmFacebook {
 
-    const char* const GRAPH_API_VERSION = "v2.6";
+    const char* const GRAPH_API_VERSION = "v3.3";
 
     enum State {
         STATE_CREATED              = 1,
