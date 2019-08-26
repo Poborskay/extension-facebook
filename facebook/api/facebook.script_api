@@ -6,47 +6,51 @@
 
 #*****************************************************************************************************
 
-  - name: login_with_read_permissions
+  - name: login_with_permissions
     type: function
     desc: Login to Facebook and request a set of publish permissions.
 
           The user is prompted to authorize the application using the login dialog of the specific
-          platform. Even if the user is already logged in to Facebook this function
-          can still be used to request additional publish permissions.
-
-
-          [icon:attention] Note that this function cannot be used to request read permissions.
-          If the application requires both publish and read permissions, individual
-          calls to both [ref:login_with_publish_permissions]
-          and [ref:login_with_read_permissions] has to be made.
-
+          platform. Even if the user is already logged in to Facebook this function can still be used to request additional publish permissions.
 
           A comprehensive list of permissions can be found in the [Facebook permissions](https://developers.facebook.com/docs/facebook-login/permissions) documentation,
-          as well as in their [guide to best practises for login management](https://developers.facebook.com/docs/facebook-login/best-practices).
+          as well as in their [guide to best practices for login management](https://developers.facebook.com/docs/facebook-login/best-practices).
 
     parameters:
-    - name: permissions
-      type: table
-      desc: table with the requested read permission strings.
+      - name: permissions
+        type: table
+        desc: table with the requested publish permission strings.
+      - name: audience
+        type: number
+        desc: The audience that should be able to see the publications.
+              Can be any of
 
-    - name: callback
-      type: function
-      desc: Callback function that is executed when the permission request dialog is closed.
-      parameters:
-        - name: self
-          type: object
-          desc: The context of the calling script
+                - `facebook.AUDIENCE_NONE`
 
-        - name: self
-          type: table
-          desc: The context of the calling script
+                - `facebook.AUDIENCE_ONLYME`
+
+                - `facebook.AUDIENCE_FRIENDS`
+
+                - `facebook.AUDIENCE_EVERYONE`
+
+      - name: callback
+        type: function
+        desc: Callback function that is executed when the permission request dialog is closed.
+        parameters:
+          - name: self
+            type: object
+            desc: The context of the calling script
+
+          - name: data
+            type: table
+            desc: A table that contains the response
 
     examples:
-    - desc: |-
-            Log in to Facebook with a set of read permissions
+      - desc: |-
+            Log in to Facebook with a set of publish permissions
             ```lua
-            local permissions = {"public_profile", "email", "user_friends"}
-            facebook.login_with_read_permissions(permissions, function(self, data)
+            local permissions = {"publish_actions"}
+            facebook.login_with_permissions(permissions, facebook.AUDIENCE_FRIENDS, function(self, data)
                 if (data.status == facebook.STATE_OPEN and data.error == nil) then
                     print("Successfully logged into Facebook")
                     pprint(facebook.permissions())
@@ -57,56 +61,10 @@
             end)
             ```
 
-#*****************************************************************************************************
-
-  - name: login_with_publish_permissions
-    type: function
-    desc: Login to Facebook and request a set of publish permissions.
-
-          The user is prompted to authorize the application using the login dialog of the specific
-          platform. Even if the user is already logged in to Facebook this function can still be used to request additional publish permissions.
-
-
-          [icon:attention] Note that this function cannot be used to request read permissions.
-          If the application requires both publish and read permissions, individual calls to both [ref:login_with_publish_permissions]
-          and [ref:login_with_read_permissions] has to be made.
-
-
-          A comprehensive list of permissions can be found in the [Facebook permissions](https://developers.facebook.com/docs/facebook-login/permissions) documentation,
-          as well as in their [guide to best practises for login management](https://developers.facebook.com/docs/facebook-login/best-practices).
-
-    parameters:
-    - name: permissions
-      type: table
-      desc: table with the requested publish permission strings.
-    - name: audience
-      type: number
-      desc: The audience that should be able to see the publications.
-            Can be any of
-
-              - `facebook.AUDIENCE_NONE`
-              - `facebook.AUDIENCE_ONLYME`
-              - `facebook.AUDIENCE_FRIENDS`
-              - `facebook.AUDIENCE_EVERYONE`
-
-    - name: callback
-      type: function
-      desc: Callback function that is executed when the permission request dialog is closed.
-      parameters:
-        - name: self
-          type: object
-          desc: The context of the calling script
-
-        - name: data
-          type: table
-          desc: A table that contains the response
-
-    examples:
-    - desc: |-
-            Log in to Facebook with a set of publish permissions
+            Log in to Facebook with a set of read permissions
             ```lua
-            local permissions = {"publish_actions"}
-            facebook.login_with_publish_permissions(permissions, facebook.AUDIENCE_FRIENDS, function(self, data)
+            local permissions = {"public_profile", "email", "user_friends"}
+            facebook.login_with_read_permissions(permissions, facebook.AUDIENCE_EVERYONE, function(self, data)
                 if (data.status == facebook.STATE_OPEN and data.error == nil) then
                     print("Successfully logged into Facebook")
                     pprint(facebook.permissions())
@@ -130,16 +88,16 @@
     desc: Get the current Facebook access token.
 
           This function returns the currently stored access token after a previous
-          sucessful login. If it returns nil no access token exists and you need
+          successful login. If it returns nil no access token exists and you need
           to perform a login to get the wanted permissions.
 
     returns:
-    - name: token
-      type: string
-      desc: the access token or nil if the user is not logged in
+      - name: token
+        type: string
+        desc: the access token or nil if the user is not logged in
 
     examples:
-    - desc: |-
+      - desc: |-
             Get the current access token, then use it to perform a graph API request.
 
             ```lua
@@ -165,12 +123,12 @@
           This function returns a table with all the currently granted permission strings.
 
     returns:
-    - name: permissions
-      type: table
-      desc: The permissions
+      - name: permissions
+        type: table
+        desc: The permissions
 
     examples:
-    - desc: |-
+      - desc: |-
             Check the currently granted permissions for a particular permission
 
             ```lua
@@ -181,7 +139,6 @@
                 end
             end
             ```
-
 
 #*****************************************************************************************************
 
@@ -198,18 +155,15 @@
             which can be used to define a custom event that is registered with Facebook Analytics.
 
             - `facebook.EVENT_ACHIEVED_LEVEL`
-            - `facebook.EVENT_ACTIVATED_APP`
             - `facebook.EVENT_ADDED_PAYMENT_INFO`
             - `facebook.EVENT_ADDED_TO_CART`
             - `facebook.EVENT_ADDED_TO_WISHLIST`
             - `facebook.EVENT_COMPLETED_REGISTRATION`
             - `facebook.EVENT_COMPLETED_TUTORIAL`
-            - `facebook.EVENT_DEACTIVATED_APP`
             - `facebook.EVENT_INITIATED_CHECKOUT`
             - `facebook.EVENT_PURCHASED`
             - `facebook.EVENT_RATED`
             - `facebook.EVENT_SEARCHED`
-            - `facebook.EVENT_SESSION_INTERRUPTIONS`
             - `facebook.EVENT_SPENT_CREDITS`
             - `facebook.EVENT_TIME_BETWEEN_SESSIONS`
             - `facebook.EVENT_UNLOCKED_ACHIEVEMENT`
@@ -240,7 +194,7 @@
             - `facebook.PARAM_SUCCESS`
 
     examples:
-    - desc: |-
+      - desc: |-
             Post a spent credits event to Facebook Analytics
 
             ```lua
@@ -292,31 +246,31 @@
           Shows a Game Request dialog. Game Requests allows players to invite their friends to play a
           game. Available parameters
 
-              - [type:string] `title`
+                - [type:string] `title`
 
-              - [type:string] `message`
+                - [type:string] `message`
 
-              - [type:number] `action_type`
+                - [type:number] `action_type`
 
-              - [type:number] `filters`
+                - [type:number] `filters`
 
-              - [type:string] `data`
+                - [type:string] `data`
 
-              - [type:string] `object_id`
+                - [type:string] `object_id`
 
-              - [type:table] `suggestions`
+                - [type:table] `suggestions`
 
-              - [type:table] `recipients`
+                - [type:table] `recipients`
 
-              - [type:string] `to`
+                - [type:string] `to`
 
 
 
           On success, the "result" table parameter passed to the callback function will include the following fields
 
-              - [type:string] `request_id`
+                - [type:string] `request_id`
 
-              - [type:table] `to`
+                - [type:table] `to`
 
 
           [Details for each parameter](https://developers.facebook.com/docs/games/services/gamerequests/v2.6#dialogparameters)
@@ -327,25 +281,25 @@
           The Feed Dialog allows people to publish individual stories to their timeline.
 
 
-          - [type:string] `caption`
+                - [type:string] `caption`
 
-          - [type:string] `description`
+                - [type:string] `description`
 
-          - [type:string] `picture`
+                - [type:string] `picture`
 
-          - [type:string] `link`
+                - [type:string] `link`
 
-          - [type:table] `people_ids`
+                - [type:table] `people_ids`
 
-          - [type:string] `place_id`
+                - [type:string] `place_id`
 
-          - [type:string] `ref`
+                - [type:string] `ref`
 
 
 
           On success, the "result" table parameter passed to the callback function will include the following fields
 
-          - [type:string] `post_id`
+                - [type:string] `post_id`
 
 
           [Details for each parameter](https://developers.facebook.com/docs/sharing/reference/feed-dialog/v2.6#params)
@@ -357,43 +311,45 @@
           Note that the `url` parameter
           corresponds to the appLinkURL (iOS) and setAppLinkUrl (Android) properties.
 
-          - [type:string] `url`
+                - [type:string] `url`
 
-          - [type:string] `preview_image`
+                - [type:string] `preview_image`
 
           [Details for each parameter](https://developers.facebook.com/docs/reference/ios/current/class/FBSDKAppInviteContent)
 
     parameters:
-    - name: dialog
-      type: string
-      desc: Dialog to show
-            - `"apprequests"`
-            - `"feed"`
-            - `"appinvite"`
+      - name: dialog
+        type: string
+        desc: Dialog to show
 
-    - name: param
-      type: table
-      desc: table with dialog parameters
+              - `"apprequests"`
 
-    - name: callback
-      type: function
-      desc: Callback function that is called when the dialog is closed.
+              - `"feed"`
 
-      parameters:
-      - name: self
-        type: object
-        desc: The context of the calling script
+              - `"appinvite"`
 
-      - name: result
+      - name: param
         type: table
-        desc: table with dialog specific results. See above.
+        desc: table with dialog parameters
 
-      - name: error
-        type: [table, nil]
-        desc: Error message. If there is no error, `error` is `nil`.
+      - name: callback
+        type: function
+        desc: Callback function that is called when the dialog is closed.
+        parameters:
+          - name: self
+            type: object
+            desc: The context of the calling script
+
+          - name: result
+            type: table
+            desc: table with dialog specific results. See above.
+
+          - name: error
+            type: table
+            desc: Error message. If there is no error, `error` is `nil`.
 
     examples:
-    - desc: |-
+      - desc: |-
             Show a dialog allowing the user to share a post to their timeline
 
             ```lua
@@ -410,6 +366,17 @@
                 facebook.show_dialog("feed", param, fb_share)
             end
             ```
+
+#*****************************************************************************************************
+
+  - name: get_version
+    type: function
+    desc: Get the version of the Facebook SDK used by the extension.
+
+    returns:
+    - name: version
+      type: string
+      desc: The Facebook SDK version
 
 #*****************************************************************************************************
 
@@ -448,6 +415,10 @@
   - name: GAMEREQUEST_FILTER_APPNONUSERS
     type: number
     desc: Game request filter type "app_non_users" for "apprequests" dialog
+
+  - name: EVENT_ACHIEVED_LEVEL
+    type: number
+    desc: Log this event when the user has achieved a level
 
   - name: EVENT_ADDED_PAYMENT_INFO
     type: number
@@ -493,10 +464,7 @@
   - name: EVENT_SPENT_CREDITS
     type: number
     desc: Log this event when the user has spent app credits
-
           The value_to_sum passed to facebook.post_event should be the number of credits spent.
-
-          [icon:attention] This event is currently an undocumented event in the Facebook SDK.
 
   - name: EVENT_TIME_BETWEEN_SESSIONS
     type: number
