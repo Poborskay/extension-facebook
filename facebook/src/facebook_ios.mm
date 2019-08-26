@@ -442,13 +442,17 @@ void PlatformFacebookLoginWithPermissions(lua_State* L, const char** permissions
     g_Facebook.m_Callback = callback;
     g_Facebook.m_Self = context;
 
+    dmLogWarning("PlatformFacebookLoginWithPermissions");
     // Check if there already is a access token, and if it has expired.
     // In such case we want to reautorize instead of doing a new login.
     if ([FBSDKAccessToken currentAccessToken]) {
+            dmLogWarning("PlatformFacebookLoginWithPermissions - access token exists");
         if ([FBSDKAccessToken currentAccessToken].dataAccessExpired) {
+            dmLogWarning("PlatformFacebookLoginWithPermissions - access token dataAccessExpired is true");
             [g_Facebook.m_Login reauthorizeDataAccess:nil handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
                 PrepareCallback(thread, result, error);
             }];
+            dmLogWarning("PlatformFacebookLoginWithPermissions - access token dataAccessExpired is true - returning");
             return;
         }
     }
@@ -496,11 +500,13 @@ int Facebook_AccessToken(lua_State* L)
     }
 
     if ([FBSDKAccessToken currentAccessToken] && [FBSDKAccessToken currentAccessToken].dataAccessExpired) {
+        dmLogWarning("Facebook_AccessToken - access token exist and dataAccessExpired is true");
         lua_pushnil(L);
         return 1;
     }
 
     const char* token = [[[FBSDKAccessToken currentAccessToken] tokenString] UTF8String];
+    dmLogWarning("Facebook_AccessToken - returning token");
     lua_pushstring(L, token);
     return 1;
 }
