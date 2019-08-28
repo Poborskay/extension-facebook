@@ -506,9 +506,9 @@ int Facebook_AccessToken(lua_State* L)
         return 1;
     }
 
-    const char* token = [[[FBSDKAccessToken currentAccessToken] tokenString] UTF8String];
+    NSString* token = [[FBSDKAccessToken currentAccessToken] tokenString];
     dmLogWarning("Facebook_AccessToken - returning token '%s'",[token UTF8String]);
-    lua_pushstring(L, token);
+    lua_pushstring(L, [token UTF8String]);
     return 1;
 }
 
