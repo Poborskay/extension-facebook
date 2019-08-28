@@ -514,7 +514,7 @@ int Facebook_AccessToken(lua_State* L)
         dmLogWarning("Facebook_AccessToken - returning token '%s'",[token UTF8String]);
         lua_pushstring(L, [token UTF8String]);
     } else {
-        dmLogWarning("Facebook_AccessToken - token does not exist);
+        dmLogWarning("Facebook_AccessToken - token does not exist");
         lua_pushnil(L);
     }
 
