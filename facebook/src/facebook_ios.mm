@@ -457,6 +457,7 @@ void PlatformFacebookLoginWithPermissions(lua_State* L, const char** permissions
         }
     }
 
+    dmLogWarning("PlatformFacebookLoginWithPermissions - there was no access token, trying to login");
     NSMutableArray* ns_permissions = [[NSMutableArray alloc] init];
     for (uint32_t i = 0; i < permission_count; ++i)
     {
@@ -506,7 +507,7 @@ int Facebook_AccessToken(lua_State* L)
     }
 
     const char* token = [[[FBSDKAccessToken currentAccessToken] tokenString] UTF8String];
-    dmLogWarning("Facebook_AccessToken - returning token");
+    dmLogWarning("Facebook_AccessToken - returning token '%s'",[token UTF8String]);
     lua_pushstring(L, token);
     return 1;
 }
