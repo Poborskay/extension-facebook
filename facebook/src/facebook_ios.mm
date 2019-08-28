@@ -495,6 +495,7 @@ static void RunCallback(lua_State* L, NSError* error)
 
 int Facebook_AccessToken(lua_State* L)
 {
+     dmLogWarning("Calling Facebook_AccessToken");
     if(!g_Facebook.m_Login)
     {
         return luaL_error(L, "Facebook module isn't initialized! Did you set the facebook.appid in game.project?");
@@ -506,9 +507,17 @@ int Facebook_AccessToken(lua_State* L)
         return 1;
     }
 
-    NSString* token = [[FBSDKAccessToken currentAccessToken] tokenString];
-    dmLogWarning("Facebook_AccessToken - returning token '%s'",[token UTF8String]);
-    lua_pushstring(L, [token UTF8String]);
+    if ([FBSDKAccessToken currentAccessToken])
+    {
+        dmLogWarning("Facebook_AccessToken - currentAccessToken exists");
+        NSString* token = [[FBSDKAccessToken currentAccessToken] tokenString];
+        dmLogWarning("Facebook_AccessToken - returning token '%s'",[token UTF8String]);
+        lua_pushstring(L, [token UTF8String]);
+    } else {
+        dmLogWarning("Facebook_AccessToken - token does not exist);
+        lua_pushnil(L);
+    }
+
     return 1;
 }
 
