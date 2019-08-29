@@ -81,16 +81,8 @@ static void RunDialogResultCallback(lua_State*L, NSDictionary* result, NSError* 
             return false;
         }
 
-        [FBSDKLoginButton class];
-        [FBSDKProfile enableUpdatesOnAccessTokenChange:YES];
-        NSLog(@"What the heck, no token? %@", [FBSDKAccessToken currentAccessToken]);
-        //Output: What the heck, no token? (nil)
-        BOOL fbDidFinish = [[FBSDKApplicationDelegate sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
-        NSLog(@"Hey! My Token! %@", [FBSDKAccessToken currentAccessToken]);
-        //Output: Hey! My Token! <FBSDKAccessToken: 0x7fddf8d136a0>
-        //Your address in memory will be different
-        //At this point, you can do additional logic based on having the Token, like skipping ahead to a different ViewController
-        return fbDidFinish;
+        return [[FBSDKApplicationDelegate sharedInstance] application:application
+                didFinishLaunchingWithOptions:launchOptions];
     }
 
     // Sharing related methods
@@ -505,6 +497,7 @@ static void RunCallback(lua_State* L, NSError* error)
 int Facebook_AccessToken(lua_State* L)
 {
      dmLogWarning("Calling Facebook_AccessToken");
+    [[FBSDKApplicationDelegate sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
     if(!g_Facebook.m_Login)
     {
         return luaL_error(L, "Facebook module isn't initialized! Did you set the facebook.appid in game.project?");
