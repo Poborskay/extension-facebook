@@ -497,7 +497,6 @@ static void RunCallback(lua_State* L, NSError* error)
 int Facebook_AccessToken(lua_State* L)
 {
      dmLogWarning("Calling Facebook_AccessToken");
-    FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
     if(!g_Facebook.m_Login)
     {
         return luaL_error(L, "Facebook module isn't initialized! Did you set the facebook.appid in game.project?");
