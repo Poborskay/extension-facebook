@@ -54,6 +54,7 @@ static void RunDialogResultCallback(lua_State*L, NSDictionary* result, NSError* 
                        openURL:(NSURL *)url
                        sourceApplication:(NSString *)sourceApplication
                        annotation:(id)annotation {
+        dmLogWarning("FacebookAppDelegate - application:application");
         if(!g_Facebook.m_Login)
         {
             return false;
@@ -65,6 +66,7 @@ static void RunDialogResultCallback(lua_State*L, NSDictionary* result, NSError* 
     }
 
     - (void)applicationDidBecomeActive:(UIApplication *)application {
+        dmLogWarning("FacebookAppDelegate - applicationDidBecomeActive");
         if(!g_Facebook.m_Login)
         {
             return;
@@ -76,6 +78,7 @@ static void RunDialogResultCallback(lua_State*L, NSDictionary* result, NSError* 
     }
 
     - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+        dmLogWarning("FacebookAppDelegate - application:didFinishLaunchingWithOptions");
         if(!g_Facebook.m_Login)
         {
             return false;
@@ -87,6 +90,7 @@ static void RunDialogResultCallback(lua_State*L, NSDictionary* result, NSError* 
 
     // Sharing related methods
     - (void)sharer:(id<FBSDKSharing>)sharer didCompleteWithResults :(NSDictionary *)results {
+        dmLogWarning("FacebookAppDelegate - sharer:didCompleteWithResults");
         if(!g_Facebook.m_Login)
         {
             return;
@@ -104,6 +108,7 @@ static void RunDialogResultCallback(lua_State*L, NSDictionary* result, NSError* 
     }
 
     - (void)sharer:(id<FBSDKSharing>)sharer didFailWithError:(NSError *)error {
+        dmLogWarning("FacebookAppDelegate - sharer:didCompleteWithResults");
         if(!g_Facebook.m_Login)
         {
             return;
@@ -112,6 +117,7 @@ static void RunDialogResultCallback(lua_State*L, NSDictionary* result, NSError* 
     }
 
     - (void)sharerDidCancel:(id<FBSDKSharing>)sharer {
+        dmLogWarning("FacebookAppDelegate - sharerDidCancel");
         if(!g_Facebook.m_Login)
         {
             return;
@@ -123,6 +129,7 @@ static void RunDialogResultCallback(lua_State*L, NSDictionary* result, NSError* 
 
     // Game request related methods
     - (void)gameRequestDialog:(FBSDKGameRequestDialog *)gameRequestDialog didCompleteWithResults:(NSDictionary *)results {
+        dmLogWarning("FacebookAppDelegate - gameRequestDialog:didCompleteWithResults");
         if(!g_Facebook.m_Login)
         {
             return;
@@ -153,6 +160,7 @@ static void RunDialogResultCallback(lua_State*L, NSDictionary* result, NSError* 
     }
 
     - (void)gameRequestDialog:(FBSDKGameRequestDialog *)gameRequestDialog didFailWithError:(NSError *)error {
+        dmLogWarning("FacebookAppDelegate - gameRequestDialog:didFailWithError");
         if(!g_Facebook.m_Login)
         {
             return;
@@ -161,6 +169,7 @@ static void RunDialogResultCallback(lua_State*L, NSDictionary* result, NSError* 
     }
 
     - (void)gameRequestDialogDidCancel:(FBSDKGameRequestDialog *)gameRequestDialog {
+        dmLogWarning("FacebookAppDelegate - gameRequestDialogDidCancel");
         if(!g_Facebook.m_Login)
         {
             return;
