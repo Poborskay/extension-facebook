@@ -524,6 +524,13 @@ int Facebook_AccessToken(lua_State* L)
         lua_pushnil(L);
         return 1;
     }
+    
+    NSDate *date = [[FBSDKAccessToken currentAccessToken].expirationDate];
+
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"dd-MM-YYYY HH:mm:ss"];
+    NSString *dateString = [dateFormatter stringFromDate:date];
+    dmLogWarning("Facebook_AccessToken - expirationDate '%s'",[dateString UTF8String]);
 
     if ([FBSDKAccessToken currentAccessToken])
     {
