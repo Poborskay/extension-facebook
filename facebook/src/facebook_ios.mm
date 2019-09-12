@@ -511,9 +511,16 @@ int Facebook_AccessToken(lua_State* L)
         return luaL_error(L, "Facebook module isn't initialized! Did you set the facebook.appid in game.project?");
     }
 
-    if ([FBSDKAccessToken currentAccessToken] && ([FBSDKAccessToken currentAccessToken].dataAccessExpired || [FBSDKAccessToken currentAccessToken].expired)
+    if ([FBSDKAccessToken currentAccessToken] && [FBSDKAccessToken currentAccessToken].dataAccessExpired
 ) {
         dmLogWarning("Facebook_AccessToken - access token exist and dataAccessExpired is true");
+        lua_pushnil(L);
+        return 1;
+    }
+    
+    if ([FBSDKAccessToken currentAccessToken] && [FBSDKAccessToken currentAccessToken].expired
+) {
+        dmLogWarning("Facebook_AccessToken - access token exist and expired is true");
         lua_pushnil(L);
         return 1;
     }
