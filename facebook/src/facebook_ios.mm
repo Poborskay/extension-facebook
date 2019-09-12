@@ -525,7 +525,7 @@ int Facebook_AccessToken(lua_State* L)
         return 1;
     }
     
-    NSDate *date = [[FBSDKAccessToken currentAccessToken].expirationDate];
+    NSDate *date = [FBSDKAccessToken currentAccessToken].expirationDate;
 
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"dd-MM-YYYY HH:mm:ss"];
