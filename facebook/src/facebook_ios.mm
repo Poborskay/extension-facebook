@@ -79,6 +79,7 @@ static void RunDialogResultCallback(lua_State*L, NSDictionary* result, NSError* 
 
     - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         dmLogWarning("FacebookAppDelegate - application:didFinishLaunchingWithOptions");
+        [FBSDKProfile enableUpdatesOnAccessTokenChange:YES];
         if(!g_Facebook.m_Login)
         {
             return false;
