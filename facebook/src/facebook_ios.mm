@@ -621,6 +621,19 @@ int Facebook_ShowDialog(lua_State* L)
     {
         return luaL_error(L, "Facebook module isn't initialized! Did you set the facebook.appid in game.project?");
     }
+    
+    // Check if there already is a access token, and if it has expired.
+    // In such case we want to reautorize instead of doing a new login.
+    if ([FBSDKAccessToken currentAccessToken]) {
+            dmLogWarning("Facebook_ShowDialog - access token exists");
+        if ([FBSDKAccessToken currentAccessToken].dataAccessExpired) {
+            dmLogWarning("Facebook_ShowDialog - access token dataAccessExpired is true");
+            [g_Facebook.m_Login reauthorizeDataAccess:nil handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+            }];
+            dmLogWarning("Facebook_ShowDialog - access token dataAccessExpired reauthorize Access was done");
+        }
+    }
+    
     int top = lua_gettop(L);
     VerifyCallback(L);
 
