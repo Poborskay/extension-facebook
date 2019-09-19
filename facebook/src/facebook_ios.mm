@@ -514,16 +514,12 @@ int Facebook_AccessToken(lua_State* L)
 
     if ([FBSDKAccessToken currentAccessToken] && [FBSDKAccessToken currentAccessToken].dataAccessExpired
 ) {
-        dmLogWarning("Facebook_AccessToken - access token exist and dataAccessExpired is true");
-        lua_pushnil(L);
-        return 1;
+        dmLogWarning("Facebook_AccessToken - access token exist and dataAccessExpired is true, still returning token");
     }
     
     if ([FBSDKAccessToken currentAccessToken] && [FBSDKAccessToken currentAccessToken].expired
 ) {
-        dmLogWarning("Facebook_AccessToken - access token exist and expired is true");
-        lua_pushnil(L);
-        return 1;
+        dmLogWarning("Facebook_AccessToken - access token exist and expired is true, still returning token");
     }
     
     NSDate *date = [FBSDKAccessToken currentAccessToken].expirationDate;
